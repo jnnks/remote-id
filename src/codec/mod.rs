@@ -33,7 +33,7 @@ impl From<u8> for MessageType {
     }
 }
 
-fn copy_to_id(slice: &[u8]) -> [u8; 20] {
+pub fn copy_to_id(slice: &[u8]) -> [u8; 20] {
     let mut buffer = [0u8; MAX_ID_BYTE_SIZE];
     let max = if slice.len() <= MAX_ID_BYTE_SIZE {
         slice.len()

@@ -5,6 +5,13 @@ edition = "2021"
 license = "GPL-3.0"
 description = "Remote ID Implementation as Specified in ASTM F3411 - 22a"
 
-
 [dependencies]
 chrono = { version = "0.4.38", default-features = false }
+
+bluer = { version = "0.17.3", features = ["bluetoothd"], optional = true }
+tokio = { version = "1.48.0", features = ["full"], optional = true }
+uuid = { version = "1.19.0", features = ["v4"], optional = true }
+
+
+[features]
+transmit = ["dep:bluer", "dep:tokio", "dep:uuid"]

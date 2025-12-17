@@ -17,7 +17,6 @@ async fn main() -> bluer::Result<()> {
     let adapter = session.adapter("hci0")?;
 
     adapter.set_powered(true).await?;
-    let props = adapter.all_properties().await?;
 
     println!("ADAPTER NAME:    {}", adapter.name());
     println!("ADAPTER ADDRESS: {}", adapter.address().await?);

@@ -11,7 +11,7 @@ use uuid::Uuid;
 /// Transmit Example Using bluer
 ///
 /// Will advertise a remote-id signal with a fake uas-id and location in Frankfurt, Germany
-#[tokio::main(flavor = "current_thread")]
+#[tokio::main]
 async fn main() -> bluer::Result<()> {
     let session = bluer::Session::new().await?;
     let adapter = session.adapter("hci0")?;

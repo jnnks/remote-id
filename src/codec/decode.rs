@@ -108,13 +108,13 @@ fn parse_system(buffer: &[u8]) -> Option<RemoteIDMessage> {
 
     // Area Floor
     //   Group operations floor WGS-84 HAE (Altitude + 1000 m)/0.5
-    let area_floor = u16::from_be_bytes(get_bytes!(buffer, 15, 2)) as f32 / 2. - 1000.;
+    let area_floor = u16::from_le_bytes(get_bytes!(buffer, 15, 2)) as f32 / 2. - 1000.;
 
     // TODO UA Classification
     let ua_classification = if classification_type == ClassificationType::EuropeanUnion {
         UaClassification {
-            category: UaCategory::from(get_bits!(buffer[16], 4..7)),
-            class: UaClass::from(get_bits!(buffer[16], 0..3)),
+            category: UaCategory::from(buffer[17] >> 3),
+            class: UaClass::from(get_bits!(buffer[17], 0..3)),
         }
     } else {
         UaClassification::undefined()
@@ -160,7 +160,7 @@ fn parse_location(buffer: &[u8]) -> Option<RemoteIDMessage> {
     let track_direction = if ew_direction_segment > 0 {
         track_direction as u16 + 180
     } else {
-        ew_direction_segment as u16
+        track_direction as u16
     };
 
     // Speed
@@ -310,7 +310,7 @@ mod test {
             latidute: 49.875015,
             longitude: 8.912442,
             height: 11.0,
-            track_direction: 0,
+            track_direction: 52,
             horizontal_accuracy: location::HorizontalAccuracy::LessThan_3_m,
             vertical_accuracy: location::VerticalAccuracy::LessThan_3_m,
             baro_altitude_accuracy: location::VerticalAccuracy::Unknown,
@@ -375,7 +375,7 @@ mod test {
             area_floor: -1000.,
             area_radius: 250.,
             ua_classification: UaClassification {
-                category: UaCategory::Open,
+                category: UaCategory::Specific,
                 class: UaClass::Undefined,
             },
             timestamp: DateTime::parse_from_rfc3339(&"2024-07-04T14:05:54Z")

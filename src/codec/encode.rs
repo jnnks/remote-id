@@ -25,10 +25,12 @@ pub fn to_service_data(msg: &RemoteIDMessage, message_counter: u8) -> [u8; 27] {
             data[2] = (basic_id::MESSAGE_TYPE << 4) | version;
             encode_basic_id(basic_id, &mut data[2..]);
         }
+
         RemoteIDMessage::Location(location) => {
             data[2] = (location::MESSAGE_TYPE << 4) | version;
             encode_location(location, &mut data[2..]);
         }
+
         RemoteIDMessage::OperatorId(operator_id) => {
             data[2] = (operator_id::MESSAGE_TYPE << 4) | version;
             encode_operator_id(operator_id, &mut data[2..]);
@@ -70,7 +72,7 @@ fn encode_location(msg: &Location, target: &mut [u8]) {
 
     // Speed
     target[3] = if msg.speed <= 255. * 0.25 {
-        (msg.speed * 0.25) as u8
+        (msg.speed / 0.25) as u8
     } else if msg.speed > 255. * 0.25 && msg.speed < 254.25 {
         ((msg.speed - (255. * 0.25)) / 0.75) as u8
     } else {
@@ -170,9 +172,8 @@ fn encode_system(msg: &System, target: &mut [u8]) {
             msg.ua_classification.category.into(),
             msg.ua_classification.class.into(),
         );
-        std::dbg!(msg.ua_classification.category, put_bits!(cat, 7..4));
 
-        put_bits!(cat, 7..4) | put_bits!(class, 3..0)
+        cat << 3 | class
     } else {
         0
     };
@@ -261,8 +262,8 @@ mod test {
             timestamp_accuracy: None,
         });
         let expected = [
-            13, 1, 18, 32, 77, 2, 20, 128, 76, 186, 29, 200, 227, 79, 5, 77, 9, 116, 9, 208, 7, 91,
-            4, 26, 14, 0, 0,
+            13, 1, 18, 32, 77, 40, 20, 128, 76, 186, 29, 200, 227, 79, 5, 77, 9, 116, 9, 208, 7,
+            91, 4, 26, 14, 0, 0,
         ];
         assert_eq!(expected, to_service_data(&location, 1));
     }
@@ -280,7 +281,7 @@ mod test {
             area_floor: -1000.,
             area_radius: 250.,
             ua_classification: UaClassification {
-                category: UaCategory::Open,
+                category: UaCategory::Specific,
                 class: UaClass::Undefined,
             },
             timestamp: DateTime::parse_from_rfc3339(&"2024-07-04T14:05:54Z")

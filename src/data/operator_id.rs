@@ -25,9 +25,9 @@ impl From<u8> for OperatorIdType {
     }
 }
 
-impl Into<u8> for OperatorIdType {
-    fn into(self) -> u8 {
-        match self {
+impl From<OperatorIdType> for u8 {
+    fn from(val: OperatorIdType) -> Self {
+        match val {
             OperatorIdType::OperatorId => 0,
             OperatorIdType::Unknown(value) => value,
         }

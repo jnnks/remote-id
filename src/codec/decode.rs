@@ -50,7 +50,7 @@ fn parse_basic_id(buffer: &[u8]) -> Option<RemoteIDMessage> {
     let id_type = IdType::from(get_bits!(buffer[1], 7..4));
     let ua_type = UAType::from(get_bits!(buffer[1], 3..0));
 
-    let uas_id = copy_to_id(&get_bytes!(buffer, 2, crate::MAX_ID_BYTE_SIZE));
+    let uas_id = copy_to_id(get_bytes!(buffer, 2, crate::MAX_ID_BYTE_SIZE));
 
     Some(RemoteIDMessage::BasicID(BasicId {
         id_type,
@@ -173,7 +173,7 @@ fn parse_location(buffer: &[u8]) -> Option<RemoteIDMessage> {
 
     // Vertical Speed
     let vertical_speed = get_bytes!(buffer, 4, 1);
-    let vertical_speed = (vertical_speed as f32 * 0.5) as f32;
+    let vertical_speed = vertical_speed as f32 * 0.5;
 
     // Latitude
     let latidute = u32::from_le_bytes(get_bytes!(buffer, 5, 4)) as f32 / f32::powf(10., 7.);

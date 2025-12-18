@@ -90,9 +90,9 @@ impl From<u8> for UaCategory {
     }
 }
 
-impl Into<u8> for UaCategory {
-    fn into(self) -> u8 {
-        match self {
+impl From<UaCategory> for u8 {
+    fn from(val: UaCategory) -> Self {
+        match val {
             UaCategory::Undefined => 0,
             UaCategory::Open => 1,
             UaCategory::Specific => 2,
@@ -130,9 +130,9 @@ impl From<u8> for UaClass {
     }
 }
 
-impl Into<u8> for UaClass {
-    fn into(self) -> u8 {
-        match self {
+impl From<UaClass> for u8 {
+    fn from(val: UaClass) -> Self {
+        match val {
             UaClass::Undefined => 0,
             UaClass::Class0 => 1,
             UaClass::Class1 => 2,

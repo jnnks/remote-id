@@ -1,4 +1,4 @@
-use core::{time::Duration, u8};
+use core::time::Duration;
 
 pub const MESSAGE_TYPE: u8 = 1;
 
@@ -30,16 +30,16 @@ impl From<u8> for VerticalAccuracy {
     }
 }
 
-impl Into<u8> for VerticalAccuracy {
-    fn into(self) -> u8 {
-        match self {
-            Self::Unknown => 0,
-            Self::LessThan_150_m => 1,
-            Self::LessThan_45_m => 2,
-            Self::LessThan_25_m => 3,
-            Self::LessThan_10_m => 4,
-            Self::LessThan_3_m => 5,
-            Self::LessThan_1_m => 6,
+impl From<VerticalAccuracy> for u8 {
+    fn from(val: VerticalAccuracy) -> Self {
+        match val {
+            VerticalAccuracy::Unknown => 0,
+            VerticalAccuracy::LessThan_150_m => 1,
+            VerticalAccuracy::LessThan_45_m => 2,
+            VerticalAccuracy::LessThan_25_m => 3,
+            VerticalAccuracy::LessThan_10_m => 4,
+            VerticalAccuracy::LessThan_3_m => 5,
+            VerticalAccuracy::LessThan_1_m => 6,
         }
     }
 }
@@ -96,22 +96,22 @@ impl From<u8> for HorizontalAccuracy {
     }
 }
 
-impl Into<u8> for HorizontalAccuracy {
-    fn into(self) -> u8 {
-        match self {
-            Self::Unknown => 0,
-            Self::LessThan_10_NM => 1,
-            Self::LessThan_4_NM => 2,
-            Self::LessThan_2_NM => 3,
-            Self::LessThan_1_NM => 4,
-            Self::LessThan_half_NM => 5,
-            Self::LessThan_third_NM => 6,
-            Self::LessThan_tenth_NM => 7,
-            Self::LessThan_twentieth_NM => 8,
-            Self::LessThan_30_m => 9,
-            Self::LessThan_10_m => 10,
-            Self::LessThan_3_m => 11,
-            Self::LessThan_1_m => 12,
+impl From<HorizontalAccuracy> for u8 {
+    fn from(val: HorizontalAccuracy) -> Self {
+        match val {
+            HorizontalAccuracy::Unknown => 0,
+            HorizontalAccuracy::LessThan_10_NM => 1,
+            HorizontalAccuracy::LessThan_4_NM => 2,
+            HorizontalAccuracy::LessThan_2_NM => 3,
+            HorizontalAccuracy::LessThan_1_NM => 4,
+            HorizontalAccuracy::LessThan_half_NM => 5,
+            HorizontalAccuracy::LessThan_third_NM => 6,
+            HorizontalAccuracy::LessThan_tenth_NM => 7,
+            HorizontalAccuracy::LessThan_twentieth_NM => 8,
+            HorizontalAccuracy::LessThan_30_m => 9,
+            HorizontalAccuracy::LessThan_10_m => 10,
+            HorizontalAccuracy::LessThan_3_m => 11,
+            HorizontalAccuracy::LessThan_1_m => 12,
         }
     }
 }
@@ -144,14 +144,14 @@ impl From<u8> for SpeedAccuracy {
     }
 }
 
-impl Into<u8> for SpeedAccuracy {
-    fn into(self) -> u8 {
-        match self {
-            Self::Unknown => 0,
-            Self::LessThan_10_mps => 1,
-            Self::LessThan_3_mps => 2,
-            Self::LessThan_1_mps => 3,
-            Self::LessThan_third_mps => 4,
+impl From<SpeedAccuracy> for u8 {
+    fn from(val: SpeedAccuracy) -> Self {
+        match val {
+            SpeedAccuracy::Unknown => 0,
+            SpeedAccuracy::LessThan_10_mps => 1,
+            SpeedAccuracy::LessThan_3_mps => 2,
+            SpeedAccuracy::LessThan_1_mps => 3,
+            SpeedAccuracy::LessThan_third_mps => 4,
         }
     }
 }
@@ -202,9 +202,9 @@ impl From<u8> for OperationalStatus {
     }
 }
 
-impl Into<u8> for OperationalStatus {
-    fn into(self) -> u8 {
-        match self {
+impl From<OperationalStatus> for u8 {
+    fn from(val: OperationalStatus) -> Self {
+        match val {
             OperationalStatus::Ground => 1,
             OperationalStatus::Airborne => 2,
             OperationalStatus::Emergency => 3,
@@ -232,9 +232,9 @@ impl From<u8> for HeightType {
     }
 }
 
-impl Into<u8> for HeightType {
-    fn into(self) -> u8 {
-        match self {
+impl From<HeightType> for u8 {
+    fn from(val: HeightType) -> Self {
+        match val {
             HeightType::AboveTakeoff => 0,
             HeightType::AboveGroundLevel => 1,
         }

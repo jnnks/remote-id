@@ -33,9 +33,9 @@ impl From<u8> for IdType {
     }
 }
 
-impl Into<u8> for IdType {
-    fn into(self) -> u8 {
-        match self {
+impl From<IdType> for u8 {
+    fn from(val: IdType) -> Self {
+        match val {
             IdType::None => 0,
             IdType::SerialNumber => 1,
             IdType::CaaRegistrationId => 2,
@@ -88,9 +88,9 @@ impl From<u8> for UAType {
     }
 }
 
-impl Into<u8> for UAType {
-    fn into(self) -> u8 {
-        match self {
+impl From<UAType> for u8 {
+    fn from(val: UAType) -> Self {
+        match val {
             UAType::Aeroplane => 1,
             UAType::HelicopterOrMultirotor => 2,
             UAType::Gyroplane => 3,

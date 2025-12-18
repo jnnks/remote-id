@@ -54,7 +54,7 @@ macro_rules! bitmask {
         }
 
         for _ in 0..$lo {
-            pattern = (pattern << 1);
+            pattern <<= 1;
         }
 
         pattern
@@ -96,7 +96,7 @@ macro_rules! get_bytes {
 #[macro_export]
 macro_rules! get_bits {
     ($num:expr, $hi:literal..$lo:literal) => {{
-        let p = crate::bitmask!($lo, $hi);
+        let p = $crate::bitmask!($lo, $hi);
         ($num & p) >> $lo
     }};
 }
@@ -104,7 +104,7 @@ macro_rules! get_bits {
 #[macro_export]
 macro_rules! put_bits {
     ($num:expr, $hi:literal..$lo:literal) => {{
-        let p = crate::bitmask!($lo, $hi);
+        let p = $crate::bitmask!($lo, $hi);
         ($num & p) >> $lo
     }};
 }

@@ -12,37 +12,41 @@ use crate::data::*;
 use crate::MAX_ID_BYTE_SIZE;
 use crate::OPEN_DRONE_ID_AD_CODE;
 
+const VERSION: u8 = 2;
+
 pub fn to_service_data(msg: &RemoteIDMessage, message_counter: u8) -> [u8; 27] {
     let mut data = [0u8; 27];
 
     data[0] = OPEN_DRONE_ID_AD_CODE;
     data[1] = message_counter;
 
-    let version = 2;
+    to_message_buffer(msg, &mut data[2..]);
 
+    data
+}
+
+pub fn to_message_buffer(msg: &RemoteIDMessage, data: &mut [u8]) {
     match msg {
         RemoteIDMessage::BasicID(basic_id) => {
-            data[2] = (basic_id::MESSAGE_TYPE << 4) | version;
-            encode_basic_id(basic_id, &mut data[2..]);
+            data[0] = (basic_id::MESSAGE_TYPE << 4) | VERSION;
+            encode_basic_id(basic_id, data);
         }
 
         RemoteIDMessage::Location(location) => {
-            data[2] = (location::MESSAGE_TYPE << 4) | version;
-            encode_location(location, &mut data[2..]);
+            data[0] = (location::MESSAGE_TYPE << 4) | VERSION;
+            encode_location(location, data);
         }
 
         RemoteIDMessage::OperatorId(operator_id) => {
-            data[2] = (operator_id::MESSAGE_TYPE << 4) | version;
-            encode_operator_id(operator_id, &mut data[2..]);
+            data[0] = (operator_id::MESSAGE_TYPE << 4) | VERSION;
+            encode_operator_id(operator_id, data);
         }
 
         RemoteIDMessage::System(system) => {
-            data[2] = (system::MESSAGE_TYPE << 4) | version;
-            encode_system(system, &mut data[2..]);
+            data[0] = (system::MESSAGE_TYPE << 4) | VERSION;
+            encode_system(system, data);
         }
     }
-
-    data
 }
 
 fn encode_basic_id(msg: &BasicId, target: &mut [u8]) {

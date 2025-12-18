@@ -111,6 +111,15 @@ macro_rules! put_bits {
 
 #[cfg(test)]
 mod test {
+    use chrono::{SubsecRound, Utc};
+
+    use crate::{
+        codec::{copy_to_id, decode, encode},
+        data::{
+            basic_id::BasicId, location::Location, operator_id::OperatorId, system::System,
+            RemoteIDMessage,
+        },
+    };
 
     #[test]
     fn test_get_bits_trivial() {
@@ -194,5 +203,89 @@ mod test {
     fn test_bitmask_xxx() {
         let p = bitmask!(0, 3);
         std::dbg!(p);
+    }
+
+    #[test]
+    fn test_recode_basic_id() {
+        let basic_id = RemoteIDMessage::BasicID(BasicId {
+            id_type: crate::data::basic_id::IdType::None,
+            ua_type: crate::data::basic_id::UAType::Aeroplane,
+            uas_id: copy_to_id("1\0".as_bytes()),
+        });
+
+        let mut buf = [0u8; 22];
+        encode::to_message_buffer(&basic_id, &mut buf);
+        let msg = decode::from_message_buffer(&buf).unwrap();
+        std::dbg!(&msg);
+        assert_eq!(basic_id, msg);
+    }
+
+    #[test]
+    fn test_recode_location() {
+        let location = RemoteIDMessage::Location(Location {
+            operational_status: crate::data::location::OperationalStatus::Undeclared,
+            height_type: crate::data::location::HeightType::AboveGroundLevel,
+            speed: 4.0,
+            vertical_speed: 2.0,
+            pressure_altitude: 3.0,
+            geodetic_altitude: 4.0,
+            track_direction: 5,
+            horizontal_accuracy: crate::data::location::HorizontalAccuracy::LessThan_10_NM,
+            vertical_accuracy: crate::data::location::VerticalAccuracy::LessThan_10_m,
+            latidute: 6.0,
+            longitude: 7.0,
+            height: 8.0,
+            baro_altitude_accuracy: crate::data::location::VerticalAccuracy::LessThan_10_m,
+            speed_accuracy: crate::data::location::SpeedAccuracy::LessThan_10_mps,
+            timestamp: 9.0,
+            timestamp_accuracy: None,
+        });
+
+        let mut buf = [0u8; 25];
+        encode::to_message_buffer(&location, &mut buf);
+
+        let msg = decode::from_message_buffer(&buf).unwrap();
+        std::dbg!(&msg);
+        assert_eq!(location, msg);
+    }
+
+    #[test]
+    fn test_recode_operator_id() {
+        let location = RemoteIDMessage::OperatorId(OperatorId {
+            id_type: crate::data::operator_id::OperatorIdType::Unknown(99),
+            operator_id: copy_to_id("1\0".as_bytes()),
+        });
+
+        let mut buf = [0u8; 25];
+        encode::to_message_buffer(&location, &mut buf);
+        let msg = decode::from_message_buffer(&buf).unwrap();
+
+        assert_eq!(location, msg);
+    }
+
+    #[test]
+    fn test_recode_system() {
+        let location = RemoteIDMessage::System(System {
+            classification_type: crate::data::system::ClassificationType::EuropeanUnion,
+            operator_location_type: crate::data::system::OperatorLocationType::Fixed,
+            operator_latidute: 10.0,
+            operator_longitude: 10.0,
+            area_count: 11,
+            area_radius: 1230.0,
+            area_ceiling: 1234.0,
+            area_floor: 1234.0,
+            ua_classification: crate::data::system::UaClassification {
+                category: crate::data::system::UaCategory::Certified,
+                class: crate::data::system::UaClass::Class0,
+            },
+            operator_altitude: 123.0,
+            timestamp: Utc::now().trunc_subsecs(0),
+        });
+
+        let mut buf = [0u8; 25];
+        encode::to_message_buffer(&location, &mut buf);
+        let msg = decode::from_message_buffer(&buf).unwrap();
+
+        assert_eq!(location, msg);
     }
 }

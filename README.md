@@ -6,5 +6,5 @@ The messages are implemented using the specification as a guideline and there is
 
 | **Message**  | Basic ID | Location/Vector | Authentication  | Self-ID         | System   | Operator-ID | Message Pack |
 |--------------|----------|-----------------|-----------------|-----------------|----------|-------------|--------------|
-| **Encode**   | &#10004; | &#10004;        |                 |                 |          |             |              |
+| **Encode**   | &#10004; | &#10004;        |                 |                 | &#10004; | &#10004;    |              |
 | **Decode**   | &#10004; | &#10004;        |                 |                 | &#10004; | &#10004;    |              |

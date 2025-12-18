@@ -1,4 +1,4 @@
-#![cfg(feature = "transmit")]
+#![cfg(feature = "linux")]
 
 use bluer::adv::Advertisement;
 use chrono::DateTime;

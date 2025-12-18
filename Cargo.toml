@@ -17,4 +17,4 @@ uuid = { version = "1.19.0", features = ["v4"], optional = true }
 chrono = { version = "0.4.38", default-features = false, features = ["now"] }
 
 [features]
-transmit = ["dep:bluer", "dep:tokio", "dep:uuid"]
+linux = ["dep:bluer", "dep:tokio", "dep:uuid"]

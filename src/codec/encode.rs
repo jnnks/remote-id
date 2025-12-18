@@ -5,10 +5,10 @@ use location::OperationalStatus;
 
 extern crate std;
 
+use crate::data::operator_id::OperatorId;
 use crate::data::system::ClassificationType;
 use crate::data::system::System;
 use crate::data::*;
-use crate::put_bits;
 use crate::MAX_ID_BYTE_SIZE;
 use crate::OPEN_DRONE_ID_AD_CODE;
 
@@ -29,12 +29,15 @@ pub fn to_service_data(msg: &RemoteIDMessage, message_counter: u8) -> [u8; 27] {
             data[2] = (location::MESSAGE_TYPE << 4) | version;
             encode_location(location, &mut data[2..]);
         }
+        RemoteIDMessage::OperatorId(operator_id) => {
+            data[2] = (operator_id::MESSAGE_TYPE << 4) | version;
+            encode_operator_id(operator_id, &mut data[2..]);
+        }
+
         RemoteIDMessage::System(system) => {
             data[2] = (system::MESSAGE_TYPE << 4) | version;
             encode_system(system, &mut data[2..]);
         }
-
-        _ => todo!(),
     }
 
     data
@@ -123,6 +126,14 @@ fn encode_location(msg: &Location, target: &mut [u8]) {
     target[24] = 0;
 }
 
+fn encode_operator_id(msg: &OperatorId, target: &mut [u8]) {
+    // OperatorIdType
+    target[1] = Into::<u8>::into(msg.id_type);
+
+    // Operator ID
+    target[2..(MAX_ID_BYTE_SIZE + 2)].clone_from_slice(&msg.operator_id);
+}
+
 fn encode_system(msg: &System, target: &mut [u8]) {
     // Classification Type: Bits [4..2]
     // Operator Location/Altitude source type: Bits [1..0]
@@ -189,6 +200,7 @@ mod test {
     use crate::codec::copy_to_id;
     use crate::codec::encode::to_service_data;
     use crate::data::basic_id::BasicId;
+    use crate::data::operator_id::{OperatorId, OperatorIdType};
     use crate::data::system::{
         ClassificationType, OperatorLocationType, System, UaCategory, UaClass, UaClassification,
     };
@@ -281,5 +293,32 @@ mod test {
             254, 91, 10, 0,
         ];
         assert_eq!(service_data, to_service_data(&system, 3));
+    }
+
+    #[test]
+    fn encode_operator_id() {
+        let operator_id = RemoteIDMessage::OperatorId(OperatorId {
+            id_type: OperatorIdType::OperatorId,
+            operator_id: copy_to_id("NULL".as_bytes()),
+        });
+
+        let service_data = [
+            13, 3, 82, 0, 78, 85, 76, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ];
+        assert_eq!(service_data, to_service_data(&operator_id, 3));
+    }
+
+    #[test]
+    fn encode_operator_id_2() {
+        let operator_id = RemoteIDMessage::OperatorId(OperatorId {
+            id_type: OperatorIdType::OperatorId,
+            operator_id: copy_to_id("FIN87astrdge12k8".as_bytes()),
+        });
+
+        let service_data = [
+            13, 3, 82, 0, 70, 73, 78, 56, 55, 97, 115, 116, 114, 100, 103, 101, 49, 50, 107, 56, 0,
+            0, 0, 0, 0, 0, 0,
+        ];
+        assert_eq!(service_data, to_service_data(&operator_id, 3));
     }
 }

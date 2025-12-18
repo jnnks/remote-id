@@ -1,9 +1,17 @@
 #![cfg(feature = "transmit")]
 
 use bluer::adv::Advertisement;
+use chrono::DateTime;
 use remote_id::{
     codec::{copy_to_id, encode},
-    data::{basic_id::BasicId, location::Location},
+    data::{
+        basic_id::BasicId,
+        location::Location,
+        system::{
+            ClassificationType, OperatorLocationType, System, UaCategory, UaClass, UaClassification,
+        },
+        RemoteIDMessage,
+    },
 };
 use std::time::Duration;
 use uuid::Uuid;
@@ -22,20 +30,20 @@ async fn main() -> bluer::Result<()> {
     println!("ADAPTER ADDRESS: {}", adapter.address().await?);
 
     let messages = [
-        remote_id::data::RemoteIDMessage::BasicID(BasicId {
+        RemoteIDMessage::BasicID(BasicId {
             id_type: remote_id::data::basic_id::IdType::SerialNumber,
             ua_type: remote_id::data::basic_id::UAType::None,
             uas_id: copy_to_id("1234567890123456789\0".as_bytes()),
         }),
-        remote_id::data::RemoteIDMessage::Location(Location {
+        RemoteIDMessage::Location(Location {
             operational_status: remote_id::data::location::OperationalStatus::Ground,
             height_type: remote_id::data::location::HeightType::AboveGroundLevel,
-            speed: 0.0,
-            vertical_speed: 0.0,
+            speed: 10.0,
+            vertical_speed: 10.0,
             pressure_altitude: 0.0,
             geodetic_altitude: 0.0,
             track_direction: 0,
-            horizontal_accuracy: remote_id::data::location::HorizontalAccuracy::Unknown,
+            horizontal_accuracy: remote_id::data::location::HorizontalAccuracy::LessThan_10_NM,
             vertical_accuracy: remote_id::data::location::VerticalAccuracy::Unknown,
             latidute: 50.0828829,
             longitude: 8.6959298,
@@ -44,6 +52,24 @@ async fn main() -> bluer::Result<()> {
             speed_accuracy: remote_id::data::location::SpeedAccuracy::Unknown,
             timestamp: 0.0,
             timestamp_accuracy: None,
+        }),
+        RemoteIDMessage::System(System {
+            classification_type: ClassificationType::EuropeanUnion,
+            operator_location_type: OperatorLocationType::TakeOff,
+            operator_latidute: 50.084147,
+            operator_longitude: 8.694112,
+            operator_altitude: 212.,
+            area_ceiling: -999.,
+            area_count: 1,
+            area_floor: -100.,
+            area_radius: 249.,
+            ua_classification: UaClassification {
+                category: UaCategory::Open,
+                class: UaClass::Undefined,
+            },
+            timestamp: DateTime::parse_from_rfc3339(&"2024-07-04T14:05:54Z")
+                .unwrap()
+                .to_utc(),
         }),
     ]
     .into_iter()
